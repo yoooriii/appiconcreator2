@@ -64,7 +64,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "/Users/qa_mac/Projects/TestProjects/ExtentionTest1/ExtentionTest1/Images.xcassets"
+            argument = "/Users/qa_mac/Projects/TestProjects/ExtensionTest2/LLExtAction/ExtIcons.xcassets"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

@@ -33,6 +33,15 @@ int main(int argc, const char * argv[]) {
 		const char * cdir = argv[2];
 		NSString *assetsDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cdir length:strlen(cdir)];
 		NSString *subdir = [assetsDir stringByAppendingPathComponent:@"AppIcon.appiconset"];
+		BOOL isDir = NO;
+		//	different types of assets
+		if (![[NSFileManager defaultManager] fileExistsAtPath:subdir isDirectory:&isDir]) {
+			subdir = [assetsDir stringByAppendingPathComponent:@"Image.imageset"];
+			if (![[NSFileManager defaultManager] fileExistsAtPath:subdir isDirectory:&isDir]) {
+				NSLog(@"cannot find subdir in assets");
+				return -1;
+			}
+		}
 		NSString *jsonFile = [subdir stringByAppendingPathComponent:@"Contents.json"];
 		NSData *jsonData = [NSData dataWithContentsOfFile:jsonFile];
 		NSError *error = nil;
@@ -53,6 +62,10 @@ int main(int argc, const char * argv[]) {
 			NSString *idiom = entry[@"idiom"];//iphone/ipad
 			NSString *scale = entry[@"scale"];// 1x/2x;3x
 			NSString *size = entry[@"size"];// 29x29;
+			if (!size) {
+				//	not sure about this
+				size = @"64x64";
+			}
 			int scaleFactor = 1;
 			if (scale) {
 				if ([scale isEqualToString:@"2x"]) {
@@ -70,7 +83,12 @@ int main(int argc, const char * argv[]) {
 				case 3:			scaleTxt = @"@3x";		break;
 			}
 			if (idiom) {
-				idiom = [@"~" stringByAppendingString:idiom];
+				if ([idiom isEqualToString:@"universal"]) {
+					idiom = nil;
+				}
+				else {
+					idiom = [@"~" stringByAppendingString:idiom];
+				}
 			}
 			filename = [NSString stringWithFormat:@"icon%@%@%@.png", size, scaleTxt, idiom ? : @""];
 			//	get icon size
